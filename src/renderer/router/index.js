@@ -7,8 +7,18 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'landing-page',
-      component: require('@/components/LandingPage').default
+      name: 'feed',
+      component: require('@/components/Feed').default
+    },
+    {
+      path: '/comments/commentId',
+      name: 'comments',
+      component: require('@/components/Comments').default
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: require('@/components/Settings').default
     },
     {
       path: '*',

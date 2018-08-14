@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "author": "Lucas Reynolds <lreynolds18@gmail.com>",
   "description": "Electron-Vue Desktop App to display RSS Feed",
-  "license": null,
+  "license": "MIT",
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
@@ -56,11 +56,12 @@
     }
   },
   "dependencies": {
-    "vue": "^2.3.3",
     "axios": "^0.16.1",
+    "vue": "^2.3.3",
     "vue-electron": "^1.0.6",
     "vue-router": "^2.5.3",
-    "vuex": "^2.3.1"
+    "vuex": "^2.3.1",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
