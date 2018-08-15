@@ -3,3 +3,5 @@
 - Do settings pages
 
 - Write tests
+
+- Test travis
