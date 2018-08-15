@@ -1,0 +1,5 @@
+- Put comment object in vuex store
+
+- Do settings pages
+
+- Write tests

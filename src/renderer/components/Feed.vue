@@ -1,11 +1,30 @@
 <template>
-  <div id="wrapper">
-    <main>
-      <h1>Hello world</h1>
-      <router-link :to="{ name: 'comments', params: { commentsID: 123 }}">Comments</router-link>
-      <router-link :to="{ name: 'settings'}">Settings</router-link>
-    </main>
-  </div>
+  <main>
+    <sui-container>
+      <sui-header size="huge">RSS Feed</sui-header>
+      <sui-button secondary 
+        v-on:click="travelRoute('settings')"
+        content="Settings" 
+      />
+
+      <sui-list divided relaxed>
+        <sui-list-item
+          v-for="entry in getFeed"
+          v-bind:data="entry"
+          v-bind:key="entry.data.url"
+        >
+          <sui-list-content>
+            <h2 is="sui-header" v-on:click="travelRouteProps('comments', entry.data)">
+              <div v-html="entry.data.title"></div>
+            </h2>
+            <p>
+              <div v-html="cleanRedditHTML(entry.data.selftext_html)"></div>
+            </p>
+          </sui-list-content>
+        </sui-list-item>
+      </sui-list>
+    </sui-container>
+  </main>
 </template>
 
 <script>
@@ -15,44 +34,47 @@
     created () {
       this.$store.dispatch('loadRSS')
       this.$store.dispatch('loadFeed')
-      console.log(this.$store.getters.getFeed)
     },
     mounted () {
-      console.log(this.$store.getters.getFeed)
     },
     computed: {
+      getFeed () {
+        console.log(this.$store.getters.getFeed)
+        return this.$store.getters.getFeed
+      }
     },
     methods: {
+      cleanRedditHTML (html) {
+        if (html) {
+          html = html.substring(
+            html.lastIndexOf('&lt;div class="md"&gt;') + 22,
+            html.lastIndexOf('&lt;/div&gt;')
+          )
+
+          html = html.replace(/&amp;/g, '&')
+          html = html.replace(/&lt;/g, '<')
+          html = html.replace(/&gt;/g, '>')
+          html = html.replace(/&#39;/g, '&apos;')
+          html = html.replace(/&quot;/g, '"')
+          return html
+        }
+      },
+      travelRoute (name) {
+        this.$router.push({ name: name })
+      },
+      travelRouteProps (name, prop) {
+        this.$router.push({
+          name: name,
+          params: {
+            otherProp: {
+              'prop': prop
+            }
+          }
+        })
+      }
     }
   }
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  body { font-family: 'Source Sans Pro', sans-serif; }
-
-  #wrapper {
-    background:
-      radial-gradient(
-        ellipse at top left,
-        rgba(255, 255, 255, 1) 40%,
-        rgba(229, 229, 229, .9) 100%
-      );
-    height: 100vh;
-    padding: 60px 80px;
-    width: 100vw;
-  }
-
-  main {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  main > div { flex-basis: 50%; }
 </style>

@@ -1,59 +1,65 @@
 <template>
-  <div id="wrapper">
-    <main>
-      <h1>Hello world from comments</h1>
-      <router-link :to="{ name: 'feed'}">Feed</router-link>
-      <router-link :to="{ name: 'settings'}">Settings</router-link>
-    </main>
-  </div>
+  <main>
+    <sui-container>
+      <sui-header size="huge">Comments</sui-header>
+      <sui-button secondary 
+        v-on:click="travelRoute('feed')"
+        content="Go back!"
+      />
+      <sui-container>
+        <h2 is="sui-header">
+          <div v-html="params.title"></div>
+        </h2>
+        <p>
+          <div v-html="cleanRedditHTML(params.selftext_html)"></div>
+        </p>
+
+      </sui-container>
+
+    </sui-container>
+  </main>
 </template>
+
 
 <script>
   export default {
     name: 'feed',
     components: { },
-    created () {
-      console.log(this.$route.params.commentsId)
-      this.$store.dispatch('loadRSS')
-      this.$store.dispatch('loadFeed')
-      console.log(this.$store.getters.getFeed)
-    },
+    created () { },
     mounted () {
-      console.log(this.$store.getters.getFeed)
     },
     computed: {
+      params () {
+        console.log(this.$route.params)
+        if (Object.keys(this.$route.params).length === 0) {
+          return this.$route.params.otherProp.prop
+        } else {
+          return {}
+        }
+      }
     },
     methods: {
+      cleanRedditHTML (html) {
+        if (html) {
+          html = html.substring(
+            html.lastIndexOf('&lt;div class="md"&gt;') + 22,
+            html.lastIndexOf('&lt;/div&gt;')
+          )
+
+          html = html.replace(/&amp;/g, '&')
+          html = html.replace(/&lt;/g, '<')
+          html = html.replace(/&gt;/g, '>')
+          html = html.replace(/&#39;/g, '&apos;')
+          html = html.replace(/&quot;/g, '"')
+          return html
+        }
+      },
+      travelRoute (name) {
+        this.$router.push({ name: name })
+      }
     }
   }
 </script>
 
 <style>
-  @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  body { font-family: 'Source Sans Pro', sans-serif; }
-
-  #wrapper {
-    background:
-      radial-gradient(
-        ellipse at top left,
-        rgba(255, 255, 255, 1) 40%,
-        rgba(229, 229, 229, .9) 100%
-      );
-    height: 100vh;
-    padding: 60px 80px;
-    width: 100vw;
-  }
-
-  main {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  main > div { flex-basis: 50%; }
 </style>

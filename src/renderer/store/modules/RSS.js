@@ -1,8 +1,8 @@
 const state = {
   RSS: [
-    { domain: 'reddit.com', group: 'Data Science', groupOn: true, on: true, url: 'https://reddit.com/r/machinelearning.rss', type: 'xml' },
+    { domain: 'reddit.com', group: 'Data Science', groupOn: true, on: true, url: 'https://reddit.com/r/machinelearning.json', type: 'json' },
     { domain: 'reddit.com', group: 'Data Science', groupOn: true, on: true, url: 'https://reddit.com/r/datascience.json', type: 'json' },
-    { domain: 'reddit.com', group: 'General CS', groupOn: true, on: false, url: 'https://reddit.com/r/cscareerquestions.rss', type: 'xml' }
+    { domain: 'reddit.com', group: 'General CS', groupOn: true, on: false, url: 'https://reddit.com/r/cscareerquestions.json', type: 'json' }
   ]
 }
 

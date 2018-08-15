@@ -25,13 +25,12 @@ const actions = {
         if (RSS.type === 'xml') {
           parseString(response.data, (err, result) => {
             if (!err) {
+              console.log(result.feed.entry)
               commit('add', result.feed.entry)
-            } else {
-              console.warn(err)
             }
           })
         } else if (RSS.type === 'json') {
-          console.log(response.data.data.children)
+          // honestly just best to handle all calls with json if we can
           commit('add', response.data.data.children)
         }
       }
