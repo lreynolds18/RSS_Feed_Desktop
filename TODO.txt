@@ -1,5 +1,7 @@
-- Put comment object in vuex store
-
-- Do settings pages
+- Do settings pages (turn group on or off / turn RSS on or off, add new RSS + group, delete RSS, sync changes, push/pull from DB)
 
 - Write tests
+
+- Feature to save post / bookmark post
+
+- Persist state in vuex (https://www.npmjs.com/package/vuex-persistedstate)

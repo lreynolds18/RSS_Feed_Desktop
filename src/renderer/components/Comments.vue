@@ -1,21 +1,40 @@
 <template>
   <main>
     <sui-container>
+      <!-- Display Header / Back Button -->
       <sui-header size="huge">Comments</sui-header>
       <sui-button secondary 
         v-on:click="travelRoute('feed')"
         content="Go back!"
       />
-      <sui-container>
+      
+      <!-- Display Post -->
+      <sui-container v-if="getPostObj">
         <h2 is="sui-header">
-          <div v-html="params.title"></div>
+          <div v-html="getPostObj.title"></div>
         </h2>
         <p>
-          <div v-html="cleanRedditHTML(params.selftext_html)"></div>
+          <div v-html="cleanRedditHTML(getPostObj.selftext_html)"></div>
         </p>
-
       </sui-container>
 
+      <!-- Display Comments -->
+      <sui-container v-if="getComments">
+        <sui-list divided relaxed>
+          <sui-list-item
+            v-for="entry in getComments"
+            v-bind:data="entry"
+            v-bind:key="entry.data.url"
+          >
+            <sui-list-content>
+              <p>
+                <div>{{ entry.data.author }}</div>
+                <div v-html="cleanRedditHTML(entry.data.body_html)"></div>
+              </p>
+            </sui-list-content>
+          </sui-list-item>
+        </sui-list>
+      </sui-container>
     </sui-container>
   </main>
 </template>
@@ -26,16 +45,14 @@
     name: 'feed',
     components: { },
     created () { },
-    mounted () {
-    },
+    mounted () { },
     computed: {
-      params () {
-        console.log(this.$route.params)
-        if (Object.keys(this.$route.params).length === 0) {
-          return this.$route.params.otherProp.prop
-        } else {
-          return {}
-        }
+      getPostObj () {
+        return this.$store.getters.getPostObj
+      },
+      getComments () {
+        console.log(this.$store.getters.getComments)
+        return this.$store.getters.getComments
       }
     },
     methods: {

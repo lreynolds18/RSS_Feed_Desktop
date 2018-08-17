@@ -1,3 +1,17 @@
+/*
+const state = {
+  RSS: [
+    { group: 'Data Science', groupOn: true, RSS: [
+      { domain: 'reddit.com', on: true, url: 'https://reddit.com/r/machinelearning.json', type: 'json' },
+      { domain: 'reddit.com', on: true, url: 'https://reddit.com/r/datascience.json', type: 'json' },
+    ]},
+    { group: 'General CS', groupOn: false, RSS: [
+      { domain: 'reddit.com', on: false, url: 'https://reddit.com/r/cscareerquestions.json', type: 'json' }
+    ]}
+  ]
+}
+*/
+
 const state = {
   RSS: [
     { domain: 'reddit.com', group: 'Data Science', groupOn: true, on: true, url: 'https://reddit.com/r/machinelearning.json', type: 'json' },

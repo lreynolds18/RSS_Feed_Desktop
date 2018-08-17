@@ -62,15 +62,9 @@
       travelRoute (name) {
         this.$router.push({ name: name })
       },
-      travelRouteProps (name, prop) {
-        this.$router.push({
-          name: name,
-          params: {
-            otherProp: {
-              'prop': prop
-            }
-          }
-        })
+      travelRouteProps (name, postObj) {
+        this.$store.dispatch('setPost', postObj)
+        this.$router.push({ name: name })
       }
     }
   }
