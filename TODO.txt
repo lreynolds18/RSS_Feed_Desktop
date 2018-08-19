@@ -2,6 +2,6 @@
 
 - Write tests
 
-- Feature to save post / bookmark post
+- Feature to save (bookmark) post & comments
 
-- Persist state in vuex (https://www.npmjs.com/package/vuex-persistedstate)
+- Persist state in vuex (https://www.npmjs.com/package/vuex-persistedstate) (same as pushing/pulling from DB)

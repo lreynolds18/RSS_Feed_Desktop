@@ -1,43 +1,48 @@
-/*
 const state = {
   RSS: [
-    { group: 'Data Science', groupOn: true, RSS: [
-      { domain: 'reddit.com', on: true, url: 'https://reddit.com/r/machinelearning.json', type: 'json' },
-      { domain: 'reddit.com', on: true, url: 'https://reddit.com/r/datascience.json', type: 'json' },
-    ]},
-    { group: 'General CS', groupOn: false, RSS: [
-      { domain: 'reddit.com', on: false, url: 'https://reddit.com/r/cscareerquestions.json', type: 'json' }
-    ]}
-  ]
-}
-*/
-
-const state = {
-  RSS: [
-    { domain: 'reddit.com', group: 'Data Science', groupOn: true, on: true, url: 'https://reddit.com/r/machinelearning.json', type: 'json' },
-    { domain: 'reddit.com', group: 'Data Science', groupOn: true, on: true, url: 'https://reddit.com/r/datascience.json', type: 'json' },
-    { domain: 'reddit.com', group: 'General CS', groupOn: true, on: false, url: 'https://reddit.com/r/cscareerquestions.json', type: 'json' }
+    {
+      groupName: 'Data Science',
+      groupOn: true,
+      RSS: [
+        { domain: 'reddit.com', on: true, subreddit: 'machinelearning', type: 'json', url: 'https://reddit.com/r/machinelearning.json' },
+        { domain: 'reddit.com', on: true, subreddit: 'datascience', type: 'json', url: 'https://reddit.com/r/datascience.json' }
+      ]
+    },
+    {
+      groupName: 'General CS',
+      groupOn: false,
+      RSS: [
+        { domain: 'reddit.com', on: false, subreddit: 'cscareerquestions', type: 'json', url: 'https://reddit.com/r/cscareerquestions.json' }
+      ]
+    }
   ]
 }
 
 const mutations = {
-  add (state, RSS) {
-    state.RSS.push(RSS)
+  addRSS (state, payload) {
+    state.RSS[payload.groupIndex].RSS.push(payload.RSS)
   },
-  delete (state, index) {
-    state.RSS.length === 1 ? state.RSS = [] : state.RSS.splice(index, 1)
+  addGroup (state, groupName) {
+    state.RSS.push({
+      groupName: groupName,
+      groupOn: true,
+      RSS: []
+    })
   },
-  toggleOn (state, index) {
-    state.RSS[index].on = !state.RSS[index].on
+  deleteGroup (state, groupIndex) {
+    state.RSS.length === 1 ? state.RSS = [] : state.RSS.splice(groupIndex, 1)
   },
-  toggleGroupOn (state, group) {
-    /*
-    state.RSS.forEach((RSS, index) => {
-        if (RSS.group == group) {
-          state.RSS[index].groupOn = !state.RSS[index].groupOn;
-        }
-    });
-    */
+  toggleGroup (state, groupIndex) {
+    state.RSS[groupIndex].groupOn = !state.RSS[groupIndex].groupOn
+  },
+  deleteRSS (state, payload) {
+    state.RSS[payload.groupIndex].RSS.length === 1
+      ? state.RSS[payload.groupIndex].RSS = []
+      : state.RSS[payload.groupIndex].RSS.splice(payload.rssIndex, 1)
+  },
+  toggleRSS (state, payload) {
+    state.RSS[payload.groupIndex].RSS[payload.rssIndex].on =
+      !state.RSS[payload.groupIndex].RSS[payload.rssIndex].on
   }
 }
 
@@ -54,6 +59,25 @@ const actions = {
   },
   async setRSS ({ commit }) {
     console.log('In setRSS')
+  },
+  // REFACTOR ALL THESE INTO ONE FUNCTION
+  deleteGroup ({ commit }, groupIndex) {
+    commit('deleteGroup', groupIndex)
+  },
+  toggleGroup ({ commit }, groupIndex) {
+    commit('toggleGroup', groupIndex)
+  },
+  deleteRSS ({ commit }, payload) {
+    commit('deleteRSS', payload)
+  },
+  toggleRSS ({ commit }, payload) {
+    commit('toggleRSS', payload)
+  },
+  addRSS ({ commit }, payload) {
+    commit('addRSS', payload)
+  },
+  addGroup ({ commit }, groupName) {
+    commit('addGroup', groupName)
   }
 }
 

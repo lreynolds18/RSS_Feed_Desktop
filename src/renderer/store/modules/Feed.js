@@ -19,20 +19,24 @@ const getters = {
 
 const actions = {
   async loadFeed ({ dispatch, commit, rootGetters }) {
-    rootGetters.getRSS.forEach(async RSS => {
-      if (RSS.on === true && RSS.groupOn === true) {
-        const response = await axios(RSS.url, RSS.type)
-        if (RSS.type === 'xml') {
-          parseString(response.data, (err, result) => {
-            if (!err) {
-              console.log(result.feed.entry)
-              commit('add', result.feed.entry)
+    rootGetters.getRSS.forEach(async group => {
+      if (group.groupOn === true) {
+        group.RSS.forEach(async RSS => {
+          if (RSS.on === true) {
+            const response = await axios(RSS.url, RSS.type)
+            if (RSS.type === 'xml') {
+              parseString(response.data, (err, result) => {
+                if (!err) {
+                  console.log(result.feed.entry)
+                  commit('add', result.feed.entry)
+                }
+              })
+            } else if (RSS.type === 'json') {
+              // honestly just best to handle all calls with json if we can
+              commit('add', response.data.data.children)
             }
-          })
-        } else if (RSS.type === 'json') {
-          // honestly just best to handle all calls with json if we can
-          commit('add', response.data.data.children)
-        }
+          }
+        })
       }
     })
   }

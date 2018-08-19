@@ -1,29 +1,162 @@
 <template>
   <main>
     <sui-container>
-      <sui-header size="huge">Settings</sui-header>
-      <sui-button secondary 
-        v-on:click="travelRoute('feed')"
-        content="Go back!" 
-      />
+      <sui-header size="huge" content="Settings" />
+      <sui-button secondary @click="travelRoute('feed')" content="Go back!" />
+    </sui-container>
+
+    <sui-container v-if="getRSS">
+      <sui-list>
+        <sui-list-item v-for="(group, groupIndex) in getRSS" :key="groupIndex">
+          <sui-header 
+            size="medium" 
+            :style="group.groupOn ? {} : {textDecorationLine: 'line-through'}"
+            :content="group.groupName"
+          />
+
+          <sui-button secondary
+            @click="$store.dispatch('toggleGroup', groupIndex)"
+          >
+            <div v-if="group.groupOn">Turn Off</div>
+            <div v-else>Turn On</div>
+          </sui-button>
+
+          <sui-button secondary
+            @click="$store.dispatch('deleteGroup', groupIndex)"
+          >
+            Delete
+          </sui-button>
+
+          <sui-list>
+            <sui-list-item 
+              v-for="(RSS, rssIndex) in group.RSS"
+              :key="rssIndex"
+            >
+
+              <p :style="(group.groupOn && RSS.on)
+                        ? {}
+                        : {textDecorationLine: 'line-through'}"
+              >
+                {{ RSS.url }}
+              </p>
+
+              <sui-button secondary
+                @click="$store.dispatch('toggleRSS', {rssIndex, groupIndex})"
+              >
+                <div v-if="RSS.on">Turn Off</div>
+                <div v-else>Turn On</div>
+              </sui-button>
+
+              <sui-button secondary 
+                @click="$store.dispatch('deleteRSS', {rssIndex, groupIndex})"
+              >
+                Delete
+              </sui-button>
+            </sui-list-item>
+          </sui-list>
+
+          <sui-label>
+            Add RSS:
+            <sui-input
+              v-model="RSS_input_fields[groupIndex]"
+              placeholder="Enter RSS URL"
+            />
+            <sui-button icon="plus" @click="addRSS(groupIndex)"/>
+          </sui-label>
+        </sui-list-item>
+      </sui-list>
+    </sui-container>
+
+    <sui-container>
+      <form id="add">   
+        <sui-label>
+          Add Group: 
+          <sui-input
+            v-model="group_input_field"
+            placeholder="Enter Group Name"
+          />
+
+          <sui-button icon="plus" @click="addGroup" />
+        </sui-label>
+      </form>
     </sui-container>
   </main>
 </template>
 
 
 <script>
+  import { Drag, Drop } from 'vue-drag-drop'
+
   export default {
     name: 'feed',
-    components: { },
+    data: function () {
+      return {
+        RSS_input_fields: [],
+        group_input_field: ''
+      }
+    },
+    components: { Drag, Drop },
     created () {
     },
     mounted () {
     },
     computed: {
+      getRSS () {
+        let RSS = this.$store.getters.getRSS
+        this.RSS_input_fields = Array(RSS.length).fill('')
+        return RSS
+      }
     },
     methods: {
       travelRoute (name) {
         this.$router.push({ name: name })
+      },
+      handleDrop (toList, data) {
+        console.log(toList)
+        console.log(data)
+        const fromList = data.list
+        if (fromList) {
+          toList.push(data.item)
+          fromList.splice(fromList.indexOf(data.item), 1)
+          toList.sort((a, b) => a > b)
+        }
+      },
+      addRSS (index) {
+        // from https://gist.github.com/jlong/2428561
+        let parser = document.createElement('a')
+        parser.href = this.RSS_input_fields[index].trim()
+
+        if (parser.protocol === 'https:' && parser.hostname !== 'localhost') {
+          const repeats = this.$store.getters.getRSS[index].RSS.filter(
+            RSS => { return RSS.url === parser.href }
+          )
+
+          if (repeats.length === 0) {
+            this.$store.dispatch('addRSS', {
+              groupIndex: index,
+              RSS: {
+                domain: parser.domain,
+                on: true,
+                subreddit: parser.pathname,
+                type: 'json',
+                url: parser.href
+              }
+            })
+            this.RSS_input_fields[index] = ''
+          }
+        }
+      },
+      addGroup () {
+        const input = this.group_input_field.trim()
+        if (input !== '') {
+          const repeats = this.$store.getters.getRSS.filter(
+            group => { return group.groupName === input }
+          )
+          if (repeats.length === 0) {
+            this.$store.dispatch('addGroup', input)
+            this.group_input_field = ''
+          }
+        }
       }
     }
   }

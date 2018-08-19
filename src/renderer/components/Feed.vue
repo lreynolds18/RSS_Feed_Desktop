@@ -39,7 +39,6 @@
     },
     computed: {
       getFeed () {
-        console.log(this.$store.getters.getFeed)
         return this.$store.getters.getFeed
       }
     },
