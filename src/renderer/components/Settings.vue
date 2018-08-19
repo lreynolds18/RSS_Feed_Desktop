@@ -42,6 +42,7 @@
 
               <sui-button secondary
                 @click="$store.dispatch('toggleRSS', {rssIndex, groupIndex})"
+                :disabled="!group.groupOn"
               >
                 <div v-if="RSS.on">Turn Off</div>
                 <div v-else>Turn On</div>
@@ -49,6 +50,7 @@
 
               <sui-button secondary 
                 @click="$store.dispatch('deleteRSS', {rssIndex, groupIndex})"
+                :disabled="!group.groupOn"
               >
                 Delete
               </sui-button>
@@ -60,8 +62,13 @@
             <sui-input
               v-model="RSS_input_fields[groupIndex]"
               placeholder="Enter RSS URL"
+              :disabled="!group.groupOn"
             />
-            <sui-button icon="plus" @click="addRSS(groupIndex)"/>
+            <sui-button
+              icon="plus"
+              @click="addRSS(groupIndex)"
+              :disabled="!group.groupOn"
+            />
           </sui-label>
         </sui-list-item>
       </sui-list>
