@@ -3,10 +3,7 @@
     <sui-container>
       <!-- Display Header / Back Button -->
       <sui-header size="huge">Comments</sui-header>
-      <sui-button secondary 
-        v-on:click="travelRoute('feed')"
-        content="Go back!"
-      />
+      <sui-button secondary @click="travelRoute('feed')" content="Go back!" />
       
       <!-- Display Post -->
       <sui-container v-if="getPostObj">
@@ -22,9 +19,9 @@
       <sui-container v-if="getComments">
         <sui-list divided relaxed>
           <sui-list-item
-            v-for="entry in getComments"
-            v-bind:data="entry"
-            v-bind:key="entry.data.url"
+            v-for="(entry, index) in getComments"
+            :data="entry"
+            :key="index"
           >
             <sui-list-content>
               <p>
@@ -38,7 +35,6 @@
     </sui-container>
   </main>
 </template>
-
 
 <script>
   export default {

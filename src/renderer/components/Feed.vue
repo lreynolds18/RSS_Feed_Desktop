@@ -1,20 +1,18 @@
 <template>
   <main>
     <sui-container>
-      <sui-header size="huge">RSS Feed</sui-header>
+      <sui-header size="huge" content="RSS Feed" />
       <sui-button secondary 
-        v-on:click="travelRoute('settings')"
-        content="Settings" 
-      />
+        @click="travelRoute('settings')" content="Settings" />
 
       <sui-list divided relaxed>
         <sui-list-item
-          v-for="entry in getFeed"
-          v-bind:data="entry"
-          v-bind:key="entry.data.url"
+          v-for="(entry, index) in getFeed"
+          :data="entry"
+          :key="index"
         >
           <sui-list-content>
-            <h2 is="sui-header" v-on:click="travelRouteProps('comments', entry.data)">
+            <h2 is="sui-header" @click="travelRouteProps('comments', entry.data)">
               <div v-html="entry.data.title"></div>
             </h2>
             <p>

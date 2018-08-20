@@ -7,7 +7,9 @@
 
     <sui-container v-if="getRSS">
       <sui-list>
-        <sui-list-item v-for="(group, groupIndex) in getRSS" :key="groupIndex">
+        <sui-list-item 
+          v-for="(group, groupIndex) in getRSS" :key="groupIndex" :data="group"
+        >
           <sui-header 
             size="medium" 
             :style="group.groupOn ? {} : {textDecorationLine: 'line-through'}"
@@ -29,10 +31,8 @@
 
           <sui-list>
             <sui-list-item 
-              v-for="(RSS, rssIndex) in group.RSS"
-              :key="rssIndex"
+              v-for="(RSS, rssIndex) in group.RSS" :key="rssIndex" :data="RSS"
             >
-
               <p :style="(group.groupOn && RSS.on)
                         ? {}
                         : {textDecorationLine: 'line-through'}"
