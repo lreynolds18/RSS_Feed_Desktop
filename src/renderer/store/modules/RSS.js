@@ -22,18 +22,21 @@ const mutations = {
   addRSS (state, payload) {
     state.RSS[payload.groupIndex].RSS.push(payload.RSS)
   },
-  addGroup (state, groupName) {
+  addGroup (state, payload) {
     state.RSS.push({
-      groupName: groupName,
+      groupName: payload.groupName,
       groupOn: true,
       RSS: []
     })
   },
-  deleteGroup (state, groupIndex) {
-    state.RSS.length === 1 ? state.RSS = [] : state.RSS.splice(groupIndex, 1)
+  deleteGroup (state, payload) {
+    state.RSS.length === 1
+      ? state.RSS = []
+      : state.RSS.splice(payload.groupIndex, 1)
   },
-  toggleGroup (state, groupIndex) {
-    state.RSS[groupIndex].groupOn = !state.RSS[groupIndex].groupOn
+  toggleGroup (state, payload) {
+    state.RSS[payload.groupIndex].groupOn =
+      !state.RSS[payload.groupIndex].groupOn
   },
   deleteRSS (state, payload) {
     state.RSS[payload.groupIndex].RSS.length === 1
@@ -78,27 +81,8 @@ const actions = {
   async setRSS ({ commit }) {
     console.log('In setRSS')
   },
-  // REFACTOR ALL THESE INTO ONE FUNCTION
-  deleteGroup ({ commit }, groupIndex) {
-    commit('deleteGroup', groupIndex)
-  },
-  toggleGroup ({ commit }, groupIndex) {
-    commit('toggleGroup', groupIndex)
-  },
-  deleteRSS ({ commit }, payload) {
-    commit('deleteRSS', payload)
-  },
-  toggleRSS ({ commit }, payload) {
-    commit('toggleRSS', payload)
-  },
-  addRSS ({ commit }, payload) {
-    commit('addRSS', payload)
-  },
-  addGroup ({ commit }, groupName) {
-    commit('addGroup', groupName)
-  },
-  moveRSS ({ commit }, payload) {
-    commit('moveRSS', payload)
+  mutateRSS ({ commit }, payload) {
+    commit(payload.mutation, payload)
   }
 }
 

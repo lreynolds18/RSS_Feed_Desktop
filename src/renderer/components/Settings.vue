@@ -18,14 +18,14 @@
             />
 
             <sui-button secondary
-              @click="$store.dispatch('toggleGroup', groupIndex)"
+              @click="mutateRSS({mutation: 'toggleGroup', groupIndex: groupIndex})"
             >
               <div v-if="group.groupOn">Turn Off</div>
               <div v-else>Turn On</div>
             </sui-button>
 
             <sui-button secondary
-              @click="$store.dispatch('deleteGroup', groupIndex)"
+              @click="mutateRSS({mutation: 'deleteGroup', groupIndex: groupIndex})"
             >
               Delete
             </sui-button>
@@ -43,7 +43,7 @@
                   </p>
 
                   <sui-button secondary
-                    @click="$store.dispatch('toggleRSS', {rssIndex, groupIndex})"
+                    @click="mutateRSS({mutation: 'toggleRSS', rssIndex: rssIndex, groupIndex: groupIndex})"
                     :disabled="!group.groupOn"
                   >
                     <div v-if="RSS.on">Turn Off</div>
@@ -51,7 +51,7 @@
                   </sui-button>
 
                   <sui-button secondary 
-                    @click="$store.dispatch('deleteRSS', {rssIndex, groupIndex})"
+                    @click="mutateRSS({mutation: 'deleteRSS', rssIndex: rssIndex, groupIndex: groupIndex})"
                     :disabled="!group.groupOn"
                   >
                     Delete
@@ -123,6 +123,7 @@
       },
       handleDrop (group, args) {
         const payload = {
+          mutation: 'moveRSS',
           newGroup: group,
           oldGroup: args.group,
           RSS: args.RSS
@@ -135,7 +136,7 @@
             newRSS => { return newRSS.url === payload.RSS.url }
           )
           if (repeats.length === 0) {
-            this.$store.dispatch('moveRSS', payload)
+            this.mutateRSS(payload)
           }
         }
       },
@@ -150,7 +151,8 @@
           )
 
           if (repeats.length === 0) {
-            this.$store.dispatch('addRSS', {
+            this.mutateRSS({
+              mutation: 'addRSS',
               groupIndex: index,
               RSS: {
                 domain: parser.domain,
@@ -171,10 +173,13 @@
             group => { return group.groupName === input }
           )
           if (repeats.length === 0) {
-            this.$store.dispatch('addGroup', input)
+            this.mutateRSS({mutation: 'addGroup', groupName: input})
             this.group_input_field = ''
           }
         }
+      },
+      mutateRSS (payload) {
+        this.$store.dispatch('mutateRSS', payload)
       }
     }
   }
