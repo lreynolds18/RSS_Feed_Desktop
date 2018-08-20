@@ -10,66 +10,70 @@
         <sui-list-item 
           v-for="(group, groupIndex) in getRSS" :key="groupIndex" :data="group"
         >
-          <sui-header 
-            size="medium" 
-            :style="group.groupOn ? {} : {textDecorationLine: 'line-through'}"
-            :content="group.groupName"
-          />
+          <drop @drop="handleDrop(group, ...arguments)">
+            <sui-header 
+              size="medium" 
+              :style="group.groupOn ? {} : {textDecorationLine: 'line-through'}"
+              :content="group.groupName"
+            />
 
-          <sui-button secondary
-            @click="$store.dispatch('toggleGroup', groupIndex)"
-          >
-            <div v-if="group.groupOn">Turn Off</div>
-            <div v-else>Turn On</div>
-          </sui-button>
-
-          <sui-button secondary
-            @click="$store.dispatch('deleteGroup', groupIndex)"
-          >
-            Delete
-          </sui-button>
-
-          <sui-list>
-            <sui-list-item 
-              v-for="(RSS, rssIndex) in group.RSS" :key="rssIndex" :data="RSS"
+            <sui-button secondary
+              @click="$store.dispatch('toggleGroup', groupIndex)"
             >
-              <p :style="(group.groupOn && RSS.on)
-                        ? {}
-                        : {textDecorationLine: 'line-through'}"
-              >
-                {{ RSS.url }}
-              </p>
+              <div v-if="group.groupOn">Turn Off</div>
+              <div v-else>Turn On</div>
+            </sui-button>
 
-              <sui-button secondary
-                @click="$store.dispatch('toggleRSS', {rssIndex, groupIndex})"
+            <sui-button secondary
+              @click="$store.dispatch('deleteGroup', groupIndex)"
+            >
+              Delete
+            </sui-button>
+
+            <sui-list>
+              <sui-list-item 
+                v-for="(RSS, rssIndex) in group.RSS" :key="rssIndex" :data="RSS"
+              >
+                <drag :transfer-data="{ RSS: RSS, group: group }">
+                  <p :style="(group.groupOn && RSS.on)
+                            ? {}
+                            : {textDecorationLine: 'line-through'}"
+                  >
+                    {{ RSS.url }}
+                  </p>
+
+                  <sui-button secondary
+                    @click="$store.dispatch('toggleRSS', {rssIndex, groupIndex})"
+                    :disabled="!group.groupOn"
+                  >
+                    <div v-if="RSS.on">Turn Off</div>
+                    <div v-else>Turn On</div>
+                  </sui-button>
+
+                  <sui-button secondary 
+                    @click="$store.dispatch('deleteRSS', {rssIndex, groupIndex})"
+                    :disabled="!group.groupOn"
+                  >
+                    Delete
+                  </sui-button>
+                </drag>
+              </sui-list-item>
+            </sui-list>
+
+            <sui-label>
+              Add RSS:
+              <sui-input
+                v-model="RSS_input_fields[groupIndex]"
+                placeholder="Enter RSS URL"
                 :disabled="!group.groupOn"
-              >
-                <div v-if="RSS.on">Turn Off</div>
-                <div v-else>Turn On</div>
-              </sui-button>
-
-              <sui-button secondary 
-                @click="$store.dispatch('deleteRSS', {rssIndex, groupIndex})"
+              />
+              <sui-button
+                icon="plus"
+                @click="addRSS(groupIndex)"
                 :disabled="!group.groupOn"
-              >
-                Delete
-              </sui-button>
-            </sui-list-item>
-          </sui-list>
-
-          <sui-label>
-            Add RSS:
-            <sui-input
-              v-model="RSS_input_fields[groupIndex]"
-              placeholder="Enter RSS URL"
-              :disabled="!group.groupOn"
-            />
-            <sui-button
-              icon="plus"
-              @click="addRSS(groupIndex)"
-              :disabled="!group.groupOn"
-            />
-          </sui-label>
+              />
+            </sui-label>
+          </drop>
         </sui-list-item>
       </sui-list>
     </sui-container>
@@ -89,7 +93,6 @@
     </sui-container>
   </main>
 </template>
-
 
 <script>
   import { Drag, Drop } from 'vue-drag-drop'
@@ -118,14 +121,22 @@
       travelRoute (name) {
         this.$router.push({ name: name })
       },
-      handleDrop (toList, data) {
-        console.log(toList)
-        console.log(data)
-        const fromList = data.list
-        if (fromList) {
-          toList.push(data.item)
-          fromList.splice(fromList.indexOf(data.item), 1)
-          toList.sort((a, b) => a > b)
+      handleDrop (group, args) {
+        const payload = {
+          newGroup: group,
+          oldGroup: args.group,
+          RSS: args.RSS
+        }
+
+        // verify RSS is going to a new group
+        if (payload.newGroup.groupName !== payload.oldGroup.groupName) {
+          // verify RSS not alreay in new group
+          const repeats = payload.newGroup.RSS.filter(
+            newRSS => { return newRSS.url === payload.RSS.url }
+          )
+          if (repeats.length === 0) {
+            this.$store.dispatch('moveRSS', payload)
+          }
         }
       },
       addRSS (index) {
