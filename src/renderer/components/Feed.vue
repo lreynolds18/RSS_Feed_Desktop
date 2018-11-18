@@ -3,7 +3,7 @@
     <sui-container>
       <sui-header size="huge" content="RSS Feed" />
       <sui-button secondary 
-        @click="travelRoute('settings')" content="Settings" />
+        @click="redirect('settings')" content="Settings" />
 
       <sui-list divided relaxed>
         <sui-list-item
@@ -12,7 +12,7 @@
           :key="index"
         >
           <sui-list-content>
-            <h2 is="sui-header" @click="travelRouteProps('comments', entry.data)">
+            <h2 is="sui-header" @click="redirectWithProps('comments', entry.data)">
               <div v-html="entry.data.title"></div>
             </h2>
             <p>
@@ -49,19 +49,20 @@
           )
 
           html = html.replace(/&amp;/g, '&')
-          html = html.replace(/&lt;/g, '<')
-          html = html.replace(/&gt;/g, '>')
-          html = html.replace(/&#39;/g, '&apos;')
-          html = html.replace(/&quot;/g, '"')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&#39;/g, '&apos;')
+            .replace(/&quot;/g, '"')
+
           return html
         }
       },
-      travelRoute (name) {
-        this.$router.push({ name: name })
+      redirect (path) {
+        this.$router.push({ name: path })
       },
-      travelRouteProps (name, postObj) {
+      redirectWithProps (path, postObj) {
         this.$store.dispatch('setPost', postObj)
-        this.$router.push({ name: name })
+        this.redirect(path)
       }
     }
   }
